@@ -3,7 +3,7 @@ import PropTypes from "prop-types"; // Import PropTypes
 
 const ProductCard = ({ product }) => {
   return (
-    <Link
+    <Link key={product.id}
       to={`/product/${product.id}`}
       className="border p-4 rounded-lg shadow-md hover:shadow-lg transition"
     >
