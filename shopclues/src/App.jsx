@@ -1,35 +1,85 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Routes, Route } from 'react-router-dom';
+import Header from './components/Header';
+import Home from './pages/Home';
+import ProductDetails from './pages/ProductDetails';
+import Cart from './pages/Cart';
+import Login from './pages/Login';
+import Wishlist from './pages/Wishlist';
+import PrivateRoute from './components/PrivateRoute';
+import SearchResults from './pages/SearchResult';
+import { useDispatch } from 'react-redux';
+import { useEffect } from 'react';
+import { auth } from './firebase';
+import { setUser } from './redux/slices/authSlice';
+import { setCart } from './redux/slices/cartSlice';
+import { setWishlist } from './redux/slices/wishlistSlice';
+import  Footer  from './components/Footer';
+import CategoryPage from './pages/CategoryPage';
+import AboutUs from './pages/About';
+import ContactUs from './pages/Contactus';
+import FAQs from './pages/Faqs';
+import Terms from './pages/Terms';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const dispatch = useDispatch();
 
+  useEffect(() => {
+    // Retrieve stored user, cart, and wishlist from LocalStorage
+    const storedUser = JSON.parse(localStorage.getItem('user'));
+    if (storedUser) {
+      dispatch(setUser(storedUser));
+    }
+
+    const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
+    dispatch(setCart(storedCart));
+
+    const storedWishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+    dispatch(setWishlist(storedWishlist));
+
+    // Firebase auth state persistence
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        dispatch(setUser(user));
+      }
+    });
+  }, [dispatch]);
+  
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div className="app">
+     
+      <Header />
+      
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/product/:id" element={<ProductDetails />} />
+        <Route path="/search" element={<SearchResults />} />
+        <Route path="/category/:category" element={<CategoryPage />} />
+        <Route path='/about' element={<AboutUs/>} />
+        <Route path='/contact' element={<ContactUs/>} />
+        <Route path='/faqs' element={<FAQs/>} />
+        <Route path='/terms' element={<Terms/>} />
+        
+        <Route
+          path="/cart"
+          element={
+            <PrivateRoute>
+              <Cart />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/wishlist"
+          element={
+            <PrivateRoute>
+              <Wishlist />
+            </PrivateRoute>
+          }
+        />
+        <Route path="/login" element={<Login />} />
+      </Routes>
+      <Footer/>
+    </div>
+  );
 }
 
-export default App
+export default App;
