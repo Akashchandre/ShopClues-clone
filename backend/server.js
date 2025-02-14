@@ -9,7 +9,7 @@ dotenv.config();
 const app = express();
 
 // Middleware
-app.use(cors({ origin: 'https://67af290adaf2fb44fbadba33--shopclues-clonee.netlify.app/', credentials: true }));
+app.use(cors({ origin: 'https://67af290adaf2fb44fbadba33--shopclues-clonee.netlify.app', credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
 
