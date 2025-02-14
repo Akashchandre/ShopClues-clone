@@ -21,6 +21,37 @@ const Cart = () => {
   };
   const cartData =  cart?.length ? cart : cart.products;
   const totalAmount =  cartData?.reduce((acc, item) => acc + item.productId.price * item.quantity, 0);
+  const handleCheckout = () => {
+    if (cart.length === 0) {
+      alert("Your cart is empty!");
+      return;
+    }
+
+    const options = {
+      key: "rzp_test_sn6rVYKPsHIp4c", 
+      amount: totalAmount * 100, // Razorpay requires amount in paise (multiply by 100)
+      currency: "INR",
+      name: "ShopClues",
+      description: "Checkout Payment",
+      handler: function (response) {
+        alert(`Payment Successful! Payment ID: ${response.razorpay_payment_id}`);
+        dispatch(clearCart()); // Clear cart after successful payment
+      },
+      prefill: {
+        name: "John Doe",
+        email: "johndoe@example.com",
+        contact: "9999999999",
+      },
+      theme: {
+        color: "#3399cc",
+      },
+    };
+
+    const paymentObject = new window.Razorpay(options);
+    paymentObject.open();
+  };
+
+
   console.log(cartData)
   return (
     <div className="p-4 flex-grow min-h-[70vh]">
@@ -59,6 +90,9 @@ const Cart = () => {
             <h2 className="text-xl font-semibold">Total: ₹{totalAmount?.toFixed(2)}</h2>
             <button onClick={() => dispatch(clearCart())} className="bg-red-500 text-white px-4 py-2 rounded mt-4">
               Clear Cart
+            </button>
+            <button onClick={handleCheckout} className="bg-green-500 text-white px-4 py-2 rounded mt-4 ml-4">
+              Proceed to Checkout
             </button>
           </div>
         </>
