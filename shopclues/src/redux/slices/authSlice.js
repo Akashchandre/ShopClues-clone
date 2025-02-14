@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import { fetchCart } from './cartSlice';
 import { fetchWishlist } from './wishlistSlice';
 
-const API_URL = 'http://localhost:5000/api/auth';
+const API_URL = 'https://shopclues-clone.onrender.com/api/auth';
 
 // Load user from localStorage (if exists)
 const storedUser = JSON.parse(localStorage.getItem('user')) || null;

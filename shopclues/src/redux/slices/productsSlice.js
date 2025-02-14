@@ -3,18 +3,18 @@ import axios from 'axios';
 
 // Fetch all products
 export const fetchProducts = createAsyncThunk('products/fetch', async () => {
-  const response = await axios.get('http://localhost:5000/api/products');
+  const response = await axios.get('https://shopclues-clone.onrender.com/api/products');
   return response.data.data;
 });
 
 // Fetch categories
 export const fetchCategories = createAsyncThunk('products/fetchCategories', async () => {
-  const response = await axios.get('http://localhost:5000/api/products/category');
+  const response = await axios.get('https://shopclues-clone.onrender.com/api/products/category');
   return response.data.data;
 });
 // Fetch sub-categories for a selected category
 export const fetchSubCategories = createAsyncThunk('products/fetchSubCategories', async (category) => {
-  const response = await axios.get(`http://localhost:5000/api/products/category/${category}/subcategory`);
+  const response = await axios.get(`https://shopclues-clone.onrender.com/api/products/category/${category}/subcategory`);
   return response.data.data;
 });
 

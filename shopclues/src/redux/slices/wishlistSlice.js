@@ -12,7 +12,7 @@ function authHeader() {
 }
 // Async thunks for API calls
 export const fetchWishlist = createAsyncThunk('wishlist/fetchWishlist', async () => {
-  const { data } = await axios.get('http://localhost:5000/api/wishlist', {
+  const { data } = await axios.get('https://shopclues-clone.onrender.com/api/wishlist', {
     headers: authHeader() ,
   });
   return data;
@@ -20,14 +20,14 @@ export const fetchWishlist = createAsyncThunk('wishlist/fetchWishlist', async ()
 
 export const addToWishlist = createAsyncThunk('wishlist/addToWishlist', async (product) => {
   //console.log(productId)
-  const { data } = await axios.post('http://localhost:5000/api/wishlist/add', {productId:product._id} , {
+  const { data } = await axios.post('https://shopclues-clone.onrender.com/api/wishlist/add', {productId:product._id} , {
     headers: authHeader() ,
   });
   return data;
 });
 
 export const removeFromWishlist = createAsyncThunk('wishlist/removeFromWishlist', async (productId) => {
-  await axios.delete(`http://localhost:5000/api/wishlist/remove/${productId}`, {
+  await axios.delete(`https://shopclues-clone.onrender.com/api/wishlist/remove/${productId}`, {
     headers: authHeader() ,
   });
   return productId;

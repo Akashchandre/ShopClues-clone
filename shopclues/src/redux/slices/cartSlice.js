@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api/cart";
+const API_URL = "https://shopclues-clone.onrender.com/api/cart";
 function authHeader() {
   
   const token = localStorage.getItem("token");

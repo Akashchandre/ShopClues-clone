@@ -35,7 +35,7 @@ const ProductDetails = () => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/products/${id}`);
+        const response = await axios.get(`https://shopclues-clone.onrender.com/api/products/${id}`);
         setProduct(response.data.data); 
       } catch (error) {
         console.error("Error fetching product:", error);
@@ -80,7 +80,7 @@ const ProductDetails = () => {
   console.log(user)
     try {
       if (isInWishlist) {
-        await axios.delete(`http://localhost:5000/api/wishlist/remove/${product.id}`, {
+        await axios.delete(`https://shopclues-clone.onrender.com/api/wishlist/remove/${product.id}`, {
           headers: authHeader(),
         });
         dispatch(removeFromWishlist(product._id));
