@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import Banner1 from "../assets/Shopclues_Mainstream_web_Banner_2760x690.jpg"
-import Banner2 from "../assets/Nutriburst_sale_Web_16Jan25.jpg";
-import Banner3 from "../assets/RefurbFeaturephone_Web_17thMay24.jpg";
+import Banner2 from "../assets/Rocket_Web_2Aug24.jpg";
+import Banner3 from "../assets/instagram-posts-collection-fashion-store_23-2150236240.jpg";
 import Banner4 from "../assets/Thundar-Deal-web-16Jan25.jpg";
 
 const banners = [Banner1, Banner2, Banner3, Banner4];

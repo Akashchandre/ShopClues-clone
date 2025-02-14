@@ -1,49 +1,92 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
 
-const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
+const API_URL = "http://localhost:5000/api/cart";
+function authHeader() {
+  
+  const token = localStorage.getItem("token");
+  if (!token) {
+    console.error("No token found in localStorage");
+    return {};
+  }
+  return { Authorization: `Bearer ${token}` };
+}
 
+// Thunks for async API calls
+export const fetchCart = createAsyncThunk("cart/fetchCart", async (_, { rejectWithValue }) => {
+  try {
+    const { data } = await axios.get(API_URL, { headers: authHeader() });
+    console.log(data)
+    return data;
+  } catch (error) {
+    return rejectWithValue(error.response.data);
+  }
+});
+
+export const addToCart = createAsyncThunk("cart/addToCart", async ({ productId, quantity }, { rejectWithValue }) => {
+  try {
+    const { data } = await axios.post(`${API_URL}/add`, { productId, quantity }, { headers: authHeader() });
+    return data.data;
+  } catch (error) {
+    return rejectWithValue(error.response.data);
+  }
+});
+export const removeFromCart = createAsyncThunk("cart/removeFromCart", async (productId, { rejectWithValue }) => {
+  try {
+    await axios.delete(`${API_URL}/remove/${productId}`, { headers: authHeader() });
+    return productId;
+  } catch (error) {
+    return rejectWithValue(error.response.data);
+  }
+});
+
+export const incrementQuantity = createAsyncThunk("cart/incrementQuantity", async ({productId, quantity}, { rejectWithValue }) => {
+  try {
+    await axios.put(`${API_URL}/update`, { productId, quantity }, { headers: authHeader() });
+    const { data: products } = await axios.get(API_URL, { headers: authHeader() });
+    return products;
+  } catch (error) {
+    return rejectWithValue(error.response.data);
+  }
+});
+
+export const decrementQuantity = createAsyncThunk("cart/decrementQuantity", async ({ productId, currentQuantity }, { rejectWithValue }) => {
+  try {
+    const quantity = currentQuantity > 1 ? currentQuantity - 1 : 0;
+    await axios.put(`${API_URL}/update`, { productId, quantity }, { headers: authHeader() });
+    const { data: products } = await axios.get(API_URL, { headers: authHeader() });
+    return products;
+  } catch (error) {
+    return rejectWithValue(error.response.data);
+  }
+});
+
+export const clearCart = createAsyncThunk("cart/clearCart", async (_, { rejectWithValue }) => {
+  try {
+    await axios.delete(`${API_URL}/clear`, { headers: authHeader() });
+    return [];
+  } catch (error) {
+    return rejectWithValue(error.response.data);
+  }
+});
+
+// Cart Slice
 const cartSlice = createSlice({
-  name: 'cart',
-  initialState: storedCart,
-  reducers: {
-    setCart(state, action) {  
-      return action.payload;
-    },
-    addToCart(state, action) {              // Add to cart
-      const existingItem = state.find((item) => item.id === action.payload.id);
-      if (existingItem) {
-        existingItem.quantity += 1;
-      } else {
-        state.push({ ...action.payload, quantity: 1 });
-      }
-      localStorage.setItem('cart', JSON.stringify(state));
-    },
-    removeFromCart(state, action) {                       // Remove from cart
-      const updatedCart = state.filter((item) => item.id !== action.payload);
-      localStorage.setItem('cart', JSON.stringify(updatedCart)); // save Updated cart to local storage
-     return updatedCart;
-    },
-    incrementQuantity(state, action) {              // Increment quantity
-      const item = state.find((item) => item.id === action.payload);
-      if (item) {
-        item.quantity += 1;
-     }
-     localStorage.setItem('cart', JSON.stringify(state));
-    },
-    decrementQuantity(state, action) {           // Decrement quantity
-      const item = state.find((item) => item.id === action.payload);
-      if (item && item.quantity > 1) {
-        item.quantity -= 1;
-     }
-     localStorage.setItem('cart', JSON.stringify(state));
-    },
-    clearCart() {   
-      localStorage.removeItem('cart');                      // Clear cart
-      return [];
-    },
+  name: "cart",
+  initialState: [],
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchCart.fulfilled, (state, action) => action.payload)
+      .addCase(addToCart.fulfilled, (state, action) => action.payload)
+      .addCase(removeFromCart.fulfilled, (state, action) => state.filter(item => item.productId._id !== action.payload))
+      .addCase(incrementQuantity.fulfilled, (state, action) => action.payload)
+      .addCase(decrementQuantity.fulfilled, (state, action) => action.payload)
+      .addCase(clearCart.fulfilled, () => []);
   },
 });
 
-export const { addToCart, removeFromCart, incrementQuantity, decrementQuantity, clearCart,setCart } =
-  cartSlice.actions;
 export default cartSlice.reducer;
+
+
+

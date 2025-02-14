@@ -17,7 +17,7 @@ const Home = () => {
     selectedCategory === "all"
       ? products
       : products.filter((product) => product.category === selectedCategory);
-
+console.log(selectedCategory)
   return (
     <div>
       <Banner />

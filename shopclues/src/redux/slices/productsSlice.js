@@ -3,27 +3,38 @@ import axios from 'axios';
 
 // Fetch all products
 export const fetchProducts = createAsyncThunk('products/fetch', async () => {
-  const response = await axios.get('https://fakestoreapi.com/products');
-  return response.data;
+  const response = await axios.get('http://localhost:5000/api/products');
+  return response.data.data;
 });
 
 // Fetch categories
 export const fetchCategories = createAsyncThunk('products/fetchCategories', async () => {
-  const response = await axios.get('https://fakestoreapi.com/products/categories');
-  return response.data;
+  const response = await axios.get('http://localhost:5000/api/products/category');
+  return response.data.data;
 });
+// Fetch sub-categories for a selected category
+export const fetchSubCategories = createAsyncThunk('products/fetchSubCategories', async (category) => {
+  const response = await axios.get(`http://localhost:5000/api/products/category/${category}/subcategory`);
+  return response.data.data;
+});
+
 
 const productsSlice = createSlice({
   name: 'products',
   initialState: {
     products: [],
     categories: [],
-    selectedCategory: 'all', // Default category
+    subCategories: [],
+    selectedCategory: 'all',    // Default category
+    selectedSubCategory: 'all', 
     status: 'idle',
   },
   reducers: {
     setSelectedCategory(state, action) {
       state.selectedCategory = action.payload; // Update selected category
+    },
+    setSelectedSubCategory(state, action) {
+      state.selectedSubCategory = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -37,9 +48,12 @@ const productsSlice = createSlice({
       })
       .addCase(fetchCategories.fulfilled, (state, action) => {
         state.categories = ['all', ...action.payload]; // Include "all" as default
+      })
+      .addCase(fetchSubCategories.fulfilled, (state, action) => {
+        state.subCategories = ['all', ...action.payload];
       });
   },
 });
 
-export const { setSelectedCategory } = productsSlice.actions;
+export const { setSelectedCategory , setSelectedSubCategory} = productsSlice.actions;
 export default productsSlice.reducer;

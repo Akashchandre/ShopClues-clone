@@ -13,7 +13,7 @@ const ProductCard = ({ product }) => {
         className="w-full h-48 object-contain"
       />
       <h2 className="text-lg font-semibold mt-2">{product.title}</h2>
-      <p className="text-gray-600">${product.price}</p>
+      <p className="text-gray-600">₹{product.price}</p>
     </Link>
   );
 };

@@ -9,10 +9,9 @@ import PrivateRoute from './components/PrivateRoute';
 import SearchResults from './pages/SearchResult';
 import { useDispatch } from 'react-redux';
 import { useEffect } from 'react';
-import { auth } from './firebase';
 import { setUser } from './redux/slices/authSlice';
-import { setCart } from './redux/slices/cartSlice';
-import { setWishlist } from './redux/slices/wishlistSlice';
+// import { setCart } from './redux/slices/cartSlice';
+//import { setWishlist } from './redux/slices/wishlistSlice';
 import  Footer  from './components/Footer';
 import CategoryPage from './pages/CategoryPage';
 import AboutUs from './pages/About';
@@ -20,28 +19,19 @@ import ContactUs from './pages/Contactus';
 import FAQs from './pages/Faqs';
 import Terms from './pages/Terms';
 
+
 function App() {
   const dispatch = useDispatch();
+ 
 
   useEffect(() => {
-    // Retrieve stored user, cart, and wishlist from LocalStorage
+    
     const storedUser = JSON.parse(localStorage.getItem('user'));
     if (storedUser) {
       dispatch(setUser(storedUser));
     }
 
-    const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
-    dispatch(setCart(storedCart));
-
-    const storedWishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
-    dispatch(setWishlist(storedWishlist));
-
-    // Firebase auth state persistence
-    auth.onAuthStateChanged((user) => {
-      if (user) {
-        dispatch(setUser(user));
-      }
-    });
+  
   }, [dispatch]);
   
   return (

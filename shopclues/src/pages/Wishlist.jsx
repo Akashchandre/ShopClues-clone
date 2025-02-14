@@ -1,10 +1,15 @@
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { removeFromWishlist } from '../redux/slices/wishlistSlice';
+import { fetchWishlist, removeFromWishlist } from '../redux/slices/wishlistSlice';
 import { Link } from 'react-router-dom';
 
 const Wishlist = () => {          
   const wishlist = useSelector((state) => state.wishlist);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchWishlist())
+  }, [dispatch]);
 
   return (
     <div className="p-8 min-h-[70vh]">
@@ -19,7 +24,7 @@ const Wishlist = () => {
               <h2 className="text-lg font-semibold mt-2">{product.title}</h2>
               <p className="text-gray-600">${product.price}</p>
               <button
-                onClick={() => dispatch(removeFromWishlist(product.id))}
+                onClick={() => dispatch(removeFromWishlist(product._id))}
                 className="mt-2 px-4 py-2 bg-red-500 text-white rounded"
               >
                 Remove

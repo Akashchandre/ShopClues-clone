@@ -1,29 +1,54 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import axios from 'axios';
 
-const storedWishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+function authHeader() {
+  
+  const token = localStorage.getItem("token");
+  if (!token) {
+    console.error("No token found in localStorage");
+    return {}; 
+  }
+  return { Authorization: `Bearer ${token}` };
+}
+// Async thunks for API calls
+export const fetchWishlist = createAsyncThunk('wishlist/fetchWishlist', async () => {
+  const { data } = await axios.get('http://localhost:5000/api/wishlist', {
+    headers: authHeader() ,
+  });
+  return data;
+});
+
+export const addToWishlist = createAsyncThunk('wishlist/addToWishlist', async (product) => {
+  //console.log(productId)
+  const { data } = await axios.post('http://localhost:5000/api/wishlist/add', {productId:product._id} , {
+    headers: authHeader() ,
+  });
+  return data;
+});
+
+export const removeFromWishlist = createAsyncThunk('wishlist/removeFromWishlist', async (productId) => {
+  await axios.delete(`http://localhost:5000/api/wishlist/remove/${productId}`, {
+    headers: authHeader() ,
+  });
+  return productId;
+});
+
 const wishlistSlice = createSlice({
   name: 'wishlist',
-  initialState: storedWishlist,
-  reducers: {
-    setWishlist(state, action) {  
-      return action.payload;
-    },
-    addToWishlist(state, action) {            // Add to wishlist
-      state.push(action.payload);
-      localStorage.setItem('wishlist', JSON.stringify(state));
-      
-    },
-    removeFromWishlist(state, action) {                             // Remove from wishlist
-      const updatedWishlist = state.filter((item) => item.id !== action.payload);
-      localStorage.setItem('wishlist', JSON.stringify(updatedWishlist)); 
-      return updatedWishlist;
-    },
-    clearWishlist: () => {   
-      localStorage.removeItem('wishlist');              // Clear wishlist
-      return [];
-    }
+  initialState: [],
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchWishlist.fulfilled, (state, action) => {
+        return action.payload;
+      })
+      .addCase(addToWishlist.fulfilled, (state, action) => {
+        state.push(action.payload);
+      })
+      .addCase(removeFromWishlist.fulfilled, (state, action) => {
+        return state.filter((item) => item._id !== action.payload);
+      });
   },
 });
 
-export const { setWishlist,addToWishlist, removeFromWishlist , clearWishlist} = wishlistSlice.actions;
 export default wishlistSlice.reducer;
